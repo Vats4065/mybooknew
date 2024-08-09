@@ -75,8 +75,7 @@ export const removeIncome = (credentials) => async (dispatch) => {
                 'Content-Type': 'application/json'
             }
         })
-        console.log(response);
-        dispatch(customInputIncomeRemove(response.data))
+        dispatch(customInputIncomeRemove(id))
     } catch (error) {
         dispatch(setError(error))
     }

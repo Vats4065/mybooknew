@@ -1,9 +1,18 @@
 const mongoose = require('mongoose')
 
 const customIconIncomeSchema = new mongoose.Schema({
-    name: String,
-    amount: Number,
-    incomeIcon: String
+    name: {
+        type: String,
+        required: true
+    },
+    amount: {
+        type: Number,
+        required: true
+    },
+    icon: {
+        type: String,
+        required: true,
+    }
 })
 
 

@@ -47,7 +47,7 @@ function AddForm() {
             </div>
 
             <div className='w-full p-[24px] shadow-lightmode  dark:shadow-customshadow mt-5 rounded-lg'>
-                <h6>income Name:-</h6>
+                <h6>{selectbtn === 0 ? "Income Title" : "Expense Title"}</h6>
                 <input value={name} onChange={(e) => setName(e.target.value)} className='w-full mt-2 focus:outline-none bg-transparent shadow-lightmodeclick dark:shadow-buttonclick p-[5px_10px] rounded-md' type='text' />
                 {/* ref={nameref} onKeyDown={(e) => e.key == 'Enter' && amountref.current.focus()} */}
                 {/* ref={amountref} onKeyDown={(e) => e.key == 'Enter' && (handlingAdd(), nameref.current.focus())} */}

@@ -1,19 +1,24 @@
 import { addcustomIconexpnse, addcustomIconincome, updateExpanse, updateIncome } from '@/app/redux/reducers/counter';
+import { createIconIncome, getIconIncome } from '@/app/redux/reducers/customIconIncome';
+import { createIconExpense, getIconExpense } from '@/app/redux/reducers/customIconExpense';
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 
 import { toast } from 'react-toastify';
+import { createSingleIcon, singleIconAdd } from '@/app/redux/reducers/singleIconSlice';
 
 export default function CenterModel({ isOpenModel, setIsOpenModel, title, modeltype, selctEditId, selectbtn }) {
 
+
     const [img, setImg] = useState();
+    const [singleAmount, setSingleAmount] = useState(0)
     const fileref = useRef(null);
     const nameref = useRef(null);
     const amountref = useRef(null);
     const dispatch = useDispatch();
-    const incomeData = useSelector((state) => state.items?.income);
-    const expanseData = useSelector((state) => state.items?.expanse);
+    const incomeData = useSelector((state) => state?.iconIncome?.iconIncome);
+    const expanseData = useSelector((state) => state?.iconExpense?.iconExpense);
 
     // fuction ......................
 
@@ -26,12 +31,15 @@ export default function CenterModel({ isOpenModel, setIsOpenModel, title, modelt
         setIsOpenModel(true)
     }
 
-    // if edit from open 
+
+
+    // if edit from open
     useEffect(() => {
+
         if (isOpenModel) {
             const data = selectbtn === 0 ?
-                incomeData.find((item) => item.id === selctEditId) :
-                expanseData.find((item) => item.id === selctEditId);
+                incomeData && incomeData?.find((item) => item.id === selctEditId) :
+                expanseData?.find((item) => item.id === selctEditId);
             if (data) {
                 if (nameref.current) nameref.current.value = data.name || '';
                 if (amountref.current) amountref.current.value = data.amount || '';
@@ -51,8 +59,6 @@ export default function CenterModel({ isOpenModel, setIsOpenModel, title, modelt
     // ........................submit fuction......................................
 
     const handliingSubmit = (item) => {
-
-
         if (!nameref.current.value || !amountref.current.value) {
             closeModal();
         }
@@ -73,30 +79,30 @@ export default function CenterModel({ isOpenModel, setIsOpenModel, title, modelt
             }
             else if (modeltype === "add") {
                 let data = {
-                    id: parseFloat(Math.random()),
                     icon: img,
                     name: nameref.current.value,
-                    amount: amountref.current.value,
-                    time: ''
+                    amount: parseFloat(amountref.current.value),
                 }
 
+                // console.log(data.icon);
+
                 selectbtn == 0 ?
-                    (dispatch(addcustomIconincome(data)), toast("add income  data!")) :
-                    (dispatch(addcustomIconexpnse(data)), toast("add expanse  data!"));
+                    (dispatch(createIconIncome(data)), toast("add income  data!")) :
+                    (dispatch(createIconExpense(data)), toast("add expanse  data!"));
 
                 clearfn()
             }
 
             else if (modeltype === 'singleicon') {
                 let data = {
-                    id: Math.random(),
                     icon: img,
                     name: nameref.current.value,
                     amount: parseFloat(amountref.current.value),
-                    time: '',
                     qly: 1
                 }
-                dispatch(addsingleIcon(data)),
+                setSingleAmount(data?.amount)
+
+                dispatch(createSingleIcon(data)),
                     toast("Add singalIncome data!")
                 clearfn()
             }
@@ -145,11 +151,12 @@ export default function CenterModel({ isOpenModel, setIsOpenModel, title, modelt
                                     <div className="mt-2 flex justify-end">
                                         <div className='w-24  text-3xl hover:bg-gray-200 dark:hover:bg-[#91565663] rounded-full  h-24 border-2 p-1'>
                                             <img onClick={() => fileref.current.click()} className='w-full h-full  rounded-full' src={img ? img : "/assets/images/shirt.png"} alt="" />
-                                            <input onChange={(e) => setImg(URL.createObjectURL(e.target.files[0]))} type="file" className='hidden' ref={fileref} />
+                                            {/* <input onChange={(e) => setImg(URL.createObjectURL(e.target.files[0]))} type="file" className='hidden' ref={fileref} /> */}
+                                            <input type="file" name="icon" accept='image/*' onChange={(e) => setImg(URL.createObjectURL(e?.target?.files[0]))} className='hidden' ref={fileref} />
                                         </div>
                                     </div>
                                     <div className='w-full p-[24px] shadow-lightmode dark:shadow-customshadow mt-5 rounded-lg'>
-                                        <h6>income Name:-</h6>
+                                        {modeltype === 'singleicon' ? <h6>Title</h6> : <h6> {selectbtn === 0 ? "Income Name:-" : "Expense Name:-"}</h6>}
                                         <input ref={nameref} onKeyDown={(e) => e.key == 'Enter' && amountref.current.focus()} className='w-full mt-2 focus:outline-none bg-transparent shadow-lightmodeclick dark:shadow-buttonclick p-[5px_10px] rounded-md' type='text' />
 
                                         <h6 className='mt-5'>Amount:-</h6>
@@ -158,7 +165,7 @@ export default function CenterModel({ isOpenModel, setIsOpenModel, title, modelt
                                             <button onClick={closeModal} className='min-h-[50px] shadow-lightmode dark:shadow-customshadow w-full px-10 mt-5 rounded-lg text-white font-bold active:shadow-lightmodeclick dark:active:shadow-buttonclick'>
                                                 cancel
                                             </button>
-                                            <button onClick={() => handliingSubmit()} className='min-h-[50px] shadow-lightmode dark:shadow-customshadow w-full px-10 mt-5 rounded-lg text-white font-bold  active:shadow-lightmodeclick dark:active:shadow-buttonclick'>
+                                            <button onClick={(item) => handliingSubmit(item)} className='min-h-[50px] shadow-lightmode dark:shadow-customshadow w-full px-10 mt-5 rounded-lg text-white font-bold  active:shadow-lightmodeclick dark:active:shadow-buttonclick'>
                                                 Add
                                             </button>
                                         </div>
@@ -168,7 +175,7 @@ export default function CenterModel({ isOpenModel, setIsOpenModel, title, modelt
                         </div>
                     </div>
                 </Dialog>
-            </Transition>
+            </Transition >
         </>
     )
 }

@@ -15,8 +15,7 @@ export const customInputExpenseSlice = createSlice({
             state.inputexpense = [...state.inputexpense, action.payload]
         },
         customInputExpenseRemove: (state, action) => {
-            console.log(action);
-            console.log(state.inputexpense.filter(prev => prev.id !== action.payload.id));
+
             state.inputexpense = state.inputexpense.filter(prev => prev.id !== action.payload.id)
         },
         customInputExpenseGet: (state, action) => {
@@ -78,7 +77,7 @@ export const removeExpense = (credentials) => async (dispatch) => {
                 'Content-Type': 'application/json'
             }
         });
-        dispatch(customInputExpenseRemove(response.data));
+        dispatch(customInputExpenseRemove(id));
         dispatch(setError(null));
     } catch (error) {
         dispatch(setError(error.message));

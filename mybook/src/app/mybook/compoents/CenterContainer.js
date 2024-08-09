@@ -12,7 +12,7 @@ import axios from 'axios'
 // import { deleteExpanse } from '@/app/store/features/counter'
 // import AddForm from './AddForm'
 
-import { createExpense, getExpense, removeExpense } from '@/app/redux/reducers/customInputExpenseSlice'
+import { getExpense, removeExpense } from '@/app/redux/reducers/customInputExpenseSlice'
 import { getIncome, removeIncome } from '@/app/redux/reducers/customInputIncomeSlice'
 
 
@@ -28,7 +28,7 @@ function CenterContainer() {
     const [modeltype, setModeltype] = useState();
 
 
-    const data = selectbtn === 0 ? useSelector(state => state?.income?.inputIncome) : useSelector(state => state?.expense?.inputexpense)
+    let data = selectbtn === 0 ? useSelector(state => state?.income?.inputIncome) : useSelector(state => state?.expense?.inputexpense)
 
 
 
@@ -43,38 +43,47 @@ function CenterContainer() {
     const rendomColor = ["red", "green", "blue", "#c3c388"]
 
     const removeItem = (id) => {
-        if (selectbtn === 0) {
-            setShawData(prev => [...prev, shawData.filter(item => item?._id !== id)])
-            dispatch(removeIncome(id))
+        try {
+            if (selectbtn === 0) {
 
+                dispatch(removeIncome(id));
+                dispatch(getIncome())
+                toast.success('Income removed successfully');
+            } else {
+
+                dispatch(removeExpense(id));
+                dispatch(getExpense())
+                toast.success('Expense removed successfully');
+            }
+        } catch (error) {
+            toast.error('Error removing item');
         }
-        else {
-            setShawData(data.filter(item => item?._id !== id))
-            dispatch(removeExpense(id))
-        }
-    }
+    };
 
 
 
 
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchData = () => {
             try {
-
-                selectbtn === 0 ? dispatch(getIncome()) : dispatch(getExpense());
-
+                if (selectbtn === 0) {
+                    dispatch(getIncome());
+                } else {
+                    dispatch(getExpense());
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
         fetchData();
-    }, []);
+    }, [selectbtn, dispatch]);
 
 
     useEffect(() => {
         setShawData(data)
-    }, [data])
+    }, [data, dispatch])
+
 
 
 

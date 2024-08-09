@@ -4,8 +4,8 @@ const uploadFile = require('../middleware/ImageUpload');
 
 const customIconRouter = express.Router()
 
-customIconRouter.post("/createIconIncome", uploadFile.single('image'), createCustomIconIncome)
-customIconRouter.post("/createIconExpense", uploadFile.single('image'), createCustomIconExpense)
+customIconRouter.post("/createIconIncome", createCustomIconIncome)
+customIconRouter.post("/createIconExpense", createCustomIconExpense)
 customIconRouter.get("/getIconIncome", getCustomIconIncomes)
 customIconRouter.get("/getIconExpense", getCustomIconExpenses)
 customIconRouter.patch("/updateIconIncome/:id", updateIconIncome)

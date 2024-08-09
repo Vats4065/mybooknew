@@ -1,11 +1,12 @@
 const singleIconIncomeModel = require("../model/singleIconModel")
 
 const createSingleIconIncome = async (req, res) => {
-    const { name, amount, singleIconIncomeImg } = req.body
+    const { name, amount, icon } = req.body
     try {
-        const singleIncome = await singleIconIncomeModel.create(name, amount, singleIconIncomeImg)
+        const singleIncome = await singleIconIncomeModel.create({ name, amount, icon })
         return res.status(200).json(singleIncome)
     } catch (error) {
+        console.log(error);
         return res.status(500).json(error)
     }
 }
@@ -31,13 +32,9 @@ const getSingleIconIncomeById = async (req, res) => {
 
 const updateSingleIconIncomeById = async (req, res) => {
     const { id } = req.params
-    const { name, amount, singleIconIncomeImg } = req.body
+    const { amount } = req.body
     try {
-        const updatedSingleIconIncome = await singleIconIncomeModel.findByIdAndUpdate(id, {
-            name,
-            amount,
-            singleIconIncomeImg,
-        })
+        const updatedSingleIconIncome = await singleIconIncomeModel.findByIdAndUpdate(id, { amount })
         return res.status(200).json(updatedSingleIconIncome)
     } catch (error) {
         return res.status(500).json(error)
